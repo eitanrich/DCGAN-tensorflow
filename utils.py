@@ -23,10 +23,12 @@ def show_all_variables():
   slim.model_analyzer.analyze_vars(model_vars, print_info=True)
 
 def get_image(image_path, input_height, input_width,
+              input_start_x=None, input_start_y=None,
               resize_height=64, resize_width=64,
               crop=True, grayscale=False):
   image = imread(image_path, grayscale)
   return transform(image, input_height, input_width,
+                   input_start_x, input_start_y,
                    resize_height, resize_width, crop)
 
 def save_images(images, size, image_path):
@@ -66,21 +68,24 @@ def imsave(images, size, path):
   image = np.squeeze(merge(images, size))
   return scipy.misc.imsave(path, image)
 
-def center_crop(x, crop_h, crop_w,
+def crop_image(x, crop_h, crop_w,
+                crop_x=None, crop_y=None,
                 resize_h=64, resize_w=64):
   if crop_w is None:
     crop_w = crop_h
   h, w = x.shape[:2]
-  j = int(round((h - crop_h)/2.))
-  i = int(round((w - crop_w)/2.))
+  j = int(round((h - crop_h)/2.)) if crop_y is None else crop_y
+  i = int(round((w - crop_w)/2.)) if crop_x is None else crop_x
   return scipy.misc.imresize(
       x[j:j+crop_h, i:i+crop_w], [resize_h, resize_w])
 
-def transform(image, input_height, input_width, 
+def transform(image, input_height, input_width,
+              input_start_x=None, input_start_y=None,
               resize_height=64, resize_width=64, crop=True):
   if crop:
-    cropped_image = center_crop(
-      image, input_height, input_width, 
+    cropped_image = crop_image(
+      image, input_height, input_width,
+        input_start_x, input_start_y,
       resize_height, resize_width)
   else:
     cropped_image = scipy.misc.imresize(image, [resize_height, resize_width])

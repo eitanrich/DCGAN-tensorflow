@@ -14,7 +14,8 @@ def conv_out_size_same(size, stride):
   return int(math.ceil(float(size) / float(stride)))
 
 class DCGAN(object):
-  def __init__(self, sess, input_height=108, input_width=108, crop=True,
+  def __init__(self, sess, input_height=108, input_width=108,
+         input_start_x=None, input_start_y=None, crop=True,
          batch_size=64, sample_num = 64, output_height=64, output_width=64,
          y_dim=None, z_dim=100, gf_dim=64, df_dim=64,
          gfc_dim=1024, dfc_dim=1024, c_dim=3, dataset_name='default',
@@ -40,6 +41,8 @@ class DCGAN(object):
 
     self.input_height = input_height
     self.input_width = input_width
+    self.input_start_x = input_start_x
+    self.input_start_y = input_start_y
     self.output_height = output_height
     self.output_width = output_width
 
@@ -169,6 +172,8 @@ class DCGAN(object):
           get_image(sample_file,
                     input_height=self.input_height,
                     input_width=self.input_width,
+                    input_start_x=self.input_start_x,
+                    input_start_y=self.input_start_y,
                     resize_height=self.output_height,
                     resize_width=self.output_width,
                     crop=self.crop,
